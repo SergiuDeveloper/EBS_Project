@@ -13,13 +13,13 @@ def generate_publications(companies, dates, value_min, value_max, drop_min, drop
         drop = random.uniform(drop_min, drop_max)
         variation = random.uniform(variation_min, variation_max)
 
-        publication = (
-            ('Company', company),
-            ('Date', date),
-            ('Value', value),
-            ('Drop', drop),
-            ('Variation', variation)
-        )
+        publication = {
+            'Company': company,
+            'Date': date,
+            'Value': value,
+            'Drop': drop,
+            'Variation': variation
+        }
         yield publication
 
 def generate_dates_between(start_date, end_date):
@@ -48,4 +48,4 @@ if __name__ == '__main__':
     producer = KafkaProducer(bootstrap_servers='{}:{}'.format(kafka_publications_server_host, kafka_publications_server_port))
     
     for publication in generate_publications(COMPANIES, DATES, VALUE_MIN, VALUE_MAX, DORP_MIN, DROP_MAX, VARIATION_MIN, VARIATION_MAX):
-        producer.send(PUBLICATIONS_TOPIC_FORMAT, json.dumps(publication).encode())
+        producer.send(PUBLICATIONS_TOPIC_FORMAT, key=publication['Company'].encode(), json.dumps(publication).encode())
