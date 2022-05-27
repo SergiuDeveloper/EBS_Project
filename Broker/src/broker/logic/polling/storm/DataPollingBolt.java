@@ -45,6 +45,8 @@ public class DataPollingBolt<T extends TopologyResource> extends BaseRichBolt {
 
         ProducerRecord<String, String> producerRecord = topologyResource.toProducerRecord(this.outputTopicFormat);
         this.kafkaProducer.send(producerRecord);
+
+        System.out.println(producerRecord);
     }
 
     @Override

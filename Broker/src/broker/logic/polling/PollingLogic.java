@@ -5,7 +5,9 @@ import broker.model.TopologyResource;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
+import org.apache.kafka.common.serialization.StringSerializer;
 import org.apache.storm.tuple.Fields;
 
 import java.util.Collections;
@@ -24,10 +26,7 @@ public class PollingLogic<T extends TopologyResource> {
     private String consumerNameFormat = "General%s-%s";
     private String producerNameFormat = "General%s-%s";
 
-    public PollingLogic(String company, String pollingTopic, String kafkaGeneralServerHost, int kafkaGeneralServerPort, String kafkaSpecificServerHost, int kafkaSpecificServerPort, Fields fields, Class<T> consumedObjectType) {
-        this.generalKafkaConsumer = this.createGeneralKafkaConsumer(company, kafkaGeneralServerHost, kafkaGeneralServerPort);
-        this.specificKafkaProducer = this.createSpecificKafkaProducer(company, kafkaSpecificServerHost, kafkaSpecificServerPort);
-
+    public PollingLogic(String company, String pollingTopic, String kafkaServerHost, int kafkaServerPort, Fields fields, Class<T> consumedObjectType) {
         this.fields = fields;
         this.consumedObjectType = consumedObjectType;
 
@@ -35,6 +34,9 @@ public class PollingLogic<T extends TopologyResource> {
         this.outputTopicFormat = String.format(this.outputTopicFormat, pollingTopic, "%s");
         this.consumerNameFormat = String.format(this.consumerNameFormat, pollingTopic, "%s");
         this.producerNameFormat = String.format(this.producerNameFormat, pollingTopic, "%s");
+
+        this.generalKafkaConsumer = this.createGeneralKafkaConsumer(company, kafkaServerHost, kafkaServerPort);
+        this.specificKafkaProducer = this.createSpecificKafkaProducer(company, kafkaServerHost, kafkaServerPort);
     }
 
     public void start() {
@@ -60,6 +62,8 @@ public class PollingLogic<T extends TopologyResource> {
         Properties properties = new Properties();
         properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, String.format("%s:%d", kafkaServerHost, kafkaServerPort));
         properties.put(ConsumerConfig.GROUP_ID_CONFIG, nodeName);
+        properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+        properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         return properties;

@@ -32,20 +32,20 @@ def generate_dates_between(start_date, end_date):
 
 PUBLICATIONS_TOPIC_FORMAT = 'Publications'
 
-COMPANIES = ['Google', 'Microsoft', 'Facebook', 'Twitter', 'Amazon', 'Uber', 'Glovo'],
-DATES = list(generate_dates_between(date(2010, 4, 12), date(2018, 1, 1))),
-VALUE_MIN, VALUE_MAX = -30., 30.,
-DROP_MIN, DROP_MAX = -10., 10.,
+COMPANIES = ['Google', 'Microsoft', 'Facebook', 'Twitter', 'Amazon', 'Uber', 'Glovo']
+DATES = list(generate_dates_between(date(2010, 4, 12), date(2018, 1, 1)))
+VALUE_MIN, VALUE_MAX = -30., 30.
+DROP_MIN, DROP_MAX = -10., 10.
 VARIATION_MIN, VARIATION_MAX = 0.1, 0.8
 
 
 if __name__ == '__main__':
     if len(sys.argv) < 3:
-        raise 'Required parameters: {kafkaPublicationsServerHost} {kafkaPublicationsServerPort}'
+        raise 'Required parameters: {kafkaServerHost} {kafkaServerPort}'
 
-    kafka_publications_server_host = sys.argv[1]
-    kafka_publications_server_port = int(sys.argv[2])
-    producer = KafkaProducer(bootstrap_servers='{}:{}'.format(kafka_publications_server_host, kafka_publications_server_port))
+    kafka_server_host = sys.argv[1]
+    kafka_server_port = int(sys.argv[2])
+    producer = KafkaProducer(bootstrap_servers='{}:{}'.format(kafka_server_host, kafka_server_port))
     
-    for publication in generate_publications(COMPANIES, DATES, VALUE_MIN, VALUE_MAX, DORP_MIN, DROP_MAX, VARIATION_MIN, VARIATION_MAX):
-        producer.send(PUBLICATIONS_TOPIC_FORMAT, key=publication['Company'].encode(), json.dumps(publication).encode())
+    for publication in generate_publications(COMPANIES, DATES, VALUE_MIN, VALUE_MAX, DROP_MIN, DROP_MAX, VARIATION_MIN, VARIATION_MAX):
+        producer.send(PUBLICATIONS_TOPIC_FORMAT, key=publication['Company'].encode(), value=json.dumps(publication).encode())

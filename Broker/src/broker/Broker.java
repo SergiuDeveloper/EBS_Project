@@ -8,21 +8,15 @@ import java.security.InvalidParameterException;
 public class Broker {
 
     public static void main(String[] args) {
-        if (args.length < 9) {
-            throw new InvalidParameterException("Required parameters: {company} {kafkaPublicationsServerHost} {kafkaPublicationsServerPort} {kafkaSpecificPublicationsServerHost} {kafkaSpecificPublicationsServerPort} {kafkaSubscriptionsServerHost} {kafkaSubscriptionsServerPort} {kafkaSpecificSubscriptionsServerHost} {kafkaSpecificSubscriptionsServerPort}");
+        if (args.length < 3) {
+            throw new InvalidParameterException("Required parameters: {company} {kafkaServerHost} {kafkaServerPort}");
         }
 
         String company = args[0];
-        String kafkaPublicationsServerHost = args[1];
-        int kafkaPublicationsServerPort = Integer.parseInt(args[2]);
-        String kafkaSpecificPublicationsServerHost = args[3];
-        int kafkaSpecificPublicationsServerPort = Integer.parseInt(args[4]);
-        String kafkaSubscriptionsServerHost = args[5];
-        int kafkaSubscriptionsServerPort = Integer.parseInt(args[6]);
-        String kafkaSpecificSubscriptionsServerHost = args[7];
-        int kafkaSpecificSubscriptionsServerPort = Integer.parseInt(args[8]);
+        String kafkaServerHost = args[1];
+        int kafkaServerPort = Integer.parseInt(args[2]);
 
-        PollingLogic<Publication> publicationsPollingLogic = new PollingLogic<>(company, "Publications", kafkaPublicationsServerHost, kafkaPublicationsServerPort, kafkaSpecificPublicationsServerHost, kafkaSpecificPublicationsServerPort, Publication.getFields(), Publication.class);
+        PollingLogic<Publication> publicationsPollingLogic = new PollingLogic<>(company, "Publications", kafkaServerHost, kafkaServerPort, Publication.getFields(), Publication.class);
         publicationsPollingLogic.start();
     }
 }

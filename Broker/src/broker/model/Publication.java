@@ -86,4 +86,16 @@ public class Publication extends TopologyResource {
 
         return new ProducerRecord<>(String.format(outputTopicFormat, this.getCompany()), this.getCompany(), serializedObject);
     }
+
+    @Override
+    public String toString() {
+        return "Publication{" +
+                "company='" + company + '\'' +
+                ", value=" + value +
+                ", drop=" + drop +
+                ", variation=" + variation +
+                ", date=" + date +
+                ", objectMapper=" + objectMapper +
+                '}';
+    }
 }
